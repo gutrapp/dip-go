@@ -194,4 +194,7 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+
+	log.Panicln("Gustavo's balance: ", gustavo.balance)
+	log.Panicln("Pedro's balance: ", pedro.balance)
 }
