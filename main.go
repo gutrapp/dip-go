@@ -22,6 +22,7 @@ const (
 	CASH   PaymentMethod = "S"
 )
 
+// All of the possible states of a transaction
 type TransactionState string
 
 const (
@@ -33,7 +34,7 @@ const (
 // Models the transaction one account can make to another
 type Transaction struct {
 	id                 uint8
-	value              uint32
+	amount             uint32
 	sender             *Account
 	recipient          *Account
 	state              TransactionState
@@ -93,12 +94,12 @@ func (th *CreditTransactionHandler) pay(t *Transaction) error {
 		return errors.New("Transaction expired")
 	}
 
-	if t.sender.balance < t.value {
+	if t.sender.balance < uint32(float64(t.amount)*1.10) {
 		return errors.New("Sender doesn't have enough balance to make transaction")
 	}
 
-	t.sender.balance -= t.value
-	t.recipient.balance += t.value
+	t.sender.balance -= uint32(float64(t.amount) * 1.10)
+	t.recipient.balance += uint32(float64(t.amount) * 1.10)
 	t.state = CLOSED
 
 	return nil
@@ -121,12 +122,12 @@ func (th *CashTransactionHandler) pay(t *Transaction) error {
 		return errors.New("Transaction expired")
 	}
 
-	if t.sender.balance < t.value {
+	if t.sender.balance < uint32(float64(t.amount)*0.90) {
 		return errors.New("Sender doesn't have enough balance to make transaction")
 	}
 
-	t.sender.balance -= t.value
-	t.recipient.balance += t.value
+	t.sender.balance -= uint32(float64(t.amount) * 0.90)
+	t.recipient.balance += uint32(float64(t.amount) * 0.90)
 	t.state = CLOSED
 
 	return nil
@@ -149,12 +150,12 @@ func (th *DebitTransactionHandler) pay(t *Transaction) error {
 		return errors.New("Transaction expired")
 	}
 
-	if t.sender.balance < t.value {
+	if t.sender.balance < t.amount {
 		return errors.New("Sender doesn't have enough balance to make transaction")
 	}
 
-	t.sender.balance -= t.value
-	t.recipient.balance += t.value
+	t.sender.balance -= t.amount
+	t.recipient.balance += t.amount
 	t.state = CLOSED
 
 	return nil
@@ -175,7 +176,7 @@ func main() {
 
 	transaction := &Transaction{
 		id:            1,
-		value:         55,
+		amount:        55,
 		sender:        gustavo,
 		recipient:     pedro,
 		state:         OPEN,
