@@ -195,6 +195,6 @@ func main() {
 		log.Println(err)
 	}
 
-	log.Panicln("Gustavo's balance: ", gustavo.balance)
-	log.Panicln("Pedro's balance: ", pedro.balance)
+	log.Println("Gustavo's balance: ", gustavo.balance)
+	log.Println("Pedro's balance: ", pedro.balance)
 }
